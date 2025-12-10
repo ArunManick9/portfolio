@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
 import userPhoto from '../assets/userphoto.jpg';
 import vitosLogo from '../assets/vitoslogo.gif';
-// Rebuild trigger
 import openaiLogo from '../assets/openailogo.png';
 import geminiLogo from '../assets/geminilogo.jpg';
 import book1 from '../assets/book1.jpg';
@@ -15,7 +14,58 @@ import kaptureLogo from '../assets/kapturelogo.png';
 import signzyLogo from '../assets/signzylogo.webp';
 import tcsLogo from '../assets/tcslogo.jpg';
 
-import { motion, useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
+import { motion, useScroll, useTransform, useMotionValueEvent, AnimatePresence } from 'framer-motion';
+
+const ImageSlideshow = () => {
+    const images = [vitos1, vitos2, vitos3];
+    const [index, setIndex] = useState(0);
+
+    // Auto-play
+    React.useEffect(() => {
+        const timer = setInterval(() => {
+            setIndex((prev) => (prev + 1) % images.length);
+        }, 3000);
+        return () => clearInterval(timer);
+    }, []);
+
+    return (
+        <div style={{ width: '100%', height: '350px', position: 'relative', overflow: 'hidden', borderRadius: '16px', boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}>
+            <AnimatePresence mode='wait'>
+                <motion.img
+                    key={index}
+                    src={images[index]}
+                    alt={`Product Slide ${index + 1}`}
+                    initial={{ opacity: 0, x: 50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -50 }}
+                    transition={{ duration: 0.5 }}
+                    style={{
+                        position: 'absolute',
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover'
+                    }}
+                />
+            </AnimatePresence>
+
+            {/* Dots Indicator */}
+            <div style={{ position: 'absolute', bottom: '15px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '8px', zIndex: 10 }}>
+                {images.map((_, i) => (
+                    <div
+                        key={i}
+                        style={{
+                            width: '8px',
+                            height: '8px',
+                            borderRadius: '50%',
+                            backgroundColor: i === index ? '#fff' : 'rgba(255,255,255,0.5)',
+                            transition: 'background 0.3s'
+                        }}
+                    />
+                ))}
+            </div>
+        </div>
+    );
+};
 
 const EXPERIENCE_DATA = [
     {
@@ -70,6 +120,7 @@ const EXPERIENCE_DATA = [
         ]
     }
 ];
+
 const ProductJourneyCycle = () => {
     // Radius = 150px (Smaller to fit screen)
     const steps = [
@@ -81,13 +132,10 @@ const ProductJourneyCycle = () => {
     ];
 
     return (
-        <div style={{ position: 'relative', width: '500px', height: '400px', margin: '0 auto' }}>
+        <div style={{ position: 'relative', width: '400px', height: '400px', margin: '0 auto' }}>
             {/* Central Hub Text - REMOVED per user request */}
 
             {/* Connecting Circle/Lines (SVG) - REMOVED per user request */}
-            {/* <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 0 }}>
-                 <circle cx="250" cy="200" r="150" fill="none" stroke="#cbd5e1" strokeWidth="2" strokeDasharray="10 10" />
-            </svg> */}
 
             {steps.map((step, i) => (
                 <motion.div
@@ -111,7 +159,7 @@ const ProductJourneyCycle = () => {
                         padding: '0.5rem',
                     }}>
                         <h4 style={{ fontSize: '1.1rem', marginBottom: '0.2rem', textDecoration: 'underline' }}>{step.title}</h4>
-                        <p style={{ fontSize: '0.85rem', fontWeight: 'bold' }}>{step.text}</p>
+                        <p style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>{step.text}</p>
                     </div>
                 </motion.div>
             ))}
@@ -199,20 +247,6 @@ const Home = () => {
         }
     });
 
-    // --- CONFIGURATION OF THE "JOURNEY" ---
-    // We map scroll progress (0 to 1) to X/Y coordinates of the CAMERA.
-    // To move the camera TO a point (x, y), we translate the canvas BY (-x, -y).
-
-    // 1. Hero: (0, 0)
-    // 2. Backstory: (120vw, 80vh) -> moving Down-Right
-    // 3. Experience: (-50vw, 150vh) -> moving Down-Left
-    // 4. Products: (80vw, 220vh) -> moving Down-Right again
-
-    // Note: Using 'vw'/'vh' in calculations can be tricky with simple numbers. 
-    // For robustness, we'll stick to pixels or percentages assuming a standard desktop canvas for now, 
-    // or use calculated strings if Motion supports it (it does mostly).
-    // Let's use percentages of the viewport width/height (100vw/100vh) for relative movement.
-
     const x = useTransform(scrollYProgress,
         [0, 0.25, 0.5, 0.75, 1],
         ["0vw", "-120vw", "50vw", "-80vw", "-80vw"]
@@ -223,29 +257,14 @@ const Home = () => {
         ["0vh", "-80vh", "-150vh", "-220vh", "-220vh"]
     );
 
-    // Rotation adds to the "Freeform" haphazard feel (optional, kept subtle)
-    // REMOVED per user request for better readability
-    // const rotate = useTransform(scrollYProgress,
-    //     [0, 0.25, 0.5, 0.75, 1],
-    //     [0, -5, 3, -2, 0]
-    // );
-
     return (
         <div style={{ position: 'relative' }}>
 
-            {/* 
-        This is the "Scroll Driver". It has a huge height to allow scrolling.
-        The user scrolls THIS element.
-      */}
             <div
                 ref={containerRef}
                 style={{ height: '500vh' }}
             />
 
-            {/* 
-        This is the "Viewport" or Window. It stays fixed on screen.
-        It contains the Canvas which moves around inside it.
-      */}
             <div
                 style={{
                     position: 'fixed',
@@ -254,7 +273,7 @@ const Home = () => {
                     width: '100%',
                     height: '100%',
                     overflow: 'hidden',
-                    pointerEvents: 'none', // Allow scroll-through to the driver div
+                    pointerEvents: 'none',
                 }}
             >
                 {/* The Moving Canvas */}
@@ -262,7 +281,6 @@ const Home = () => {
                     style={{
                         x,
                         y,
-                        // rotate, // Removed rotation
                         position: 'absolute',
                         top: '50%',      // KEY FIX: Origin is center of screen
                         left: '50%',     // KEY FIX: Origin is center of screen
@@ -475,37 +493,23 @@ const Home = () => {
                     </SectionCard>
 
                     {/* 4. Launched Products (Right: 80vw, Down: 220vh) */}
-                    <SectionCard x="80vw" y="220vh" width="850px">
+                    <SectionCard x="80vw" y="220vh" width="1000px">
                         <h2 style={{ fontSize: '2.5rem', textAlign: 'center', marginBottom: '1rem' }}>Launched Products</h2>
-                        <p style={{ textAlign: 'center', fontSize: '1.2rem', marginBottom: '2rem', maxWidth: '700px', margin: '0 auto 2rem' }}>
+                        <p style={{ textAlign: 'center', fontSize: '1.2rem', marginBottom: '3rem', maxWidth: '700px', margin: '0 auto 3rem' }}>
                             The AI-first platforms enable users to build Voice agents, DIY chat agents, and Multi-agents.
                         </p>
 
-                        <ProductJourneyCycle />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+                            {/* Left Side: Slideshow */}
+                            <div style={{ flex: '0 0 45%' }}>
+                                <ImageSlideshow />
+                            </div>
 
-                        {/* Visual Evidence (Vitos Images) - Super Sized & No Captions */}
-
-                        <motion.div
-                            style={{ position: 'absolute', top: '10%', right: '-30px', width: '220px', transform: 'rotate(6deg)', zIndex: 1 }}
-                            initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }}
-                        >
-                            <img src={vitos1} alt="Vitos Interface 1" style={{ width: '100%', borderRadius: '8px', border: '3px solid #fff', boxShadow: '0 5px 10px rgba(0,0,0,0.1)' }} />
-                        </motion.div>
-
-                        <motion.div
-                            style={{ position: 'absolute', bottom: '0%', left: '-30px', width: '240px', transform: 'rotate(-4deg)', zIndex: 1 }}
-                            initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}
-                        >
-                            <img src={vitos2} alt="Vitos Interface 2" style={{ width: '100%', borderRadius: '8px', border: '3px solid #fff', boxShadow: '0 5px 10px rgba(0,0,0,0.1)' }} />
-                        </motion.div>
-
-                        <motion.div
-                            style={{ position: 'absolute', top: '-10%', left: '-10px', width: '200px', transform: 'rotate(-8deg)', zIndex: 1 }}
-                            initial={{ opacity: 0, y: -20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-                        >
-                            <img src={vitos3} alt="Vitos Interface 3" style={{ width: '100%', borderRadius: '8px', border: '3px solid #fff', boxShadow: '0 5px 10px rgba(0,0,0,0.1)' }} />
-                        </motion.div>
-
+                            {/* Right Side: The Cycle */}
+                            <div style={{ flex: '0 0 55%', display: 'flex', justifyContent: 'center' }}>
+                                <ProductJourneyCycle />
+                            </div>
+                        </div>
                     </SectionCard>
 
                 </motion.div>
