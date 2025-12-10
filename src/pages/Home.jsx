@@ -15,6 +15,7 @@ import signzyLogo from '../assets/signzylogo.webp';
 import tcsLogo from '../assets/tcslogo.jpg';
 
 import { motion, useScroll, useTransform, useMotionValueEvent, AnimatePresence } from 'framer-motion';
+import { Phone, Mail, Linkedin, User, X } from 'lucide-react';
 
 const ImageSlideshow = () => {
     const images = [vitos1, vitos2, vitos3];
@@ -62,6 +63,111 @@ const ImageSlideshow = () => {
                         }}
                     />
                 ))}
+            </div>
+        </div>
+    );
+};
+
+const Header = () => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            padding: '1.5rem 2rem',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start', // Start alignment for handling dropdown expansion
+            zIndex: 100,
+            pointerEvents: 'none' // Let clicks pass through empty space
+        }}>
+            {/* Title */}
+            <h3 style={{
+                fontFamily: 'var(--font-hand)',
+                fontSize: '1.5rem',
+                margin: 0,
+                pointerEvents: 'auto',
+                color: 'var(--color-text-primary)'
+            }}>
+                Product Manager Portfolio
+            </h3>
+
+            {/* Contact Interactive Icon */}
+            <div style={{ position: 'relative', pointerEvents: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                <button
+                    onClick={() => setIsOpen(!isOpen)}
+                    style={{
+                        background: '#1e293b',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '50%',
+                        width: '50px',
+                        height: '50px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                        transition: 'transform 0.2s'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                    onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                >
+                    {isOpen ? <X size={24} /> : <User size={24} />}
+                </button>
+
+                <AnimatePresence>
+                    {isOpen && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                            transition={{ duration: 0.2 }}
+                            style={{
+                                marginTop: '1rem',
+                                background: 'white',
+                                padding: '1.5rem',
+                                borderRadius: '16px',
+                                boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                                width: '300px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '1rem'
+                            }}
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <div style={{ background: '#f1f5f9', padding: '8px', borderRadius: '50%' }}>
+                                    <Phone size={18} color="#0f172a" />
+                                </div>
+                                <span style={{ fontSize: '0.95rem', fontWeight: '500' }}>9629511273</span>
+                            </div>
+
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <div style={{ background: '#f1f5f9', padding: '8px', borderRadius: '50%' }}>
+                                    <Mail size={18} color="#0f172a" />
+                                </div>
+                                <a href="mailto:arunmanickam.49@gmail.com" style={{ fontSize: '0.95rem', fontWeight: '500', color: 'inherit', textDecoration: 'none' }}>arunmanickam.49@gmail.com</a>
+                            </div>
+
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <div style={{ background: '#f1f5f9', padding: '8px', borderRadius: '50%' }}>
+                                    <Linkedin size={18} color="#0077b5" />
+                                </div>
+                                <a
+                                    href="https://www.linkedin.com/in/arun-manickam-363228164/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{ fontSize: '0.95rem', fontWeight: '500', color: '#0077b5', textDecoration: 'none' }}
+                                >
+                                    LinkedIn Profile
+                                </a>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </div>
     );
@@ -166,6 +272,27 @@ const ProductJourneyCycle = () => {
         </div>
     );
 };
+
+const FloatingKeyword = ({ text, top, left, right, bottom, rotate, delay }) => (
+    <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 0.6, scale: 1 }}
+        transition={{ delay: delay, duration: 0.8 }}
+        style={{
+            position: 'absolute',
+            top, left, right, bottom,
+            transform: `rotate(${rotate}deg)`,
+            fontFamily: 'var(--font-hand)',
+            fontSize: '1.2rem',
+            color: 'var(--color-text-secondary)',
+            whiteSpace: 'nowrap',
+            zIndex: 0,
+            pointerEvents: 'none'
+        }}
+    >
+        {text}
+    </motion.div>
+);
 
 const RandomLogos = () => {
     return (
@@ -276,6 +403,9 @@ const Home = () => {
                     pointerEvents: 'none',
                 }}
             >
+                {/* Fixed Header Overlay */}
+                <Header />
+
                 {/* The Moving Canvas */}
                 <motion.div
                     style={{
@@ -302,6 +432,16 @@ const Home = () => {
                         textAlign: 'center',
                         transform: 'translate(-50%, -50%)', // Centered on origin
                     }}>
+                        {/* Floating Keywords for "Empty Spaces" */}
+                        <FloatingKeyword text="Voice Agent" top="-120px" left="-180px" rotate={-10} delay={0.5} />
+                        <FloatingKeyword text="Gen AI powered Chat Bots" top="-80px" right="-220px" rotate={5} delay={0.7} />
+                        <FloatingKeyword text="UX analysis" top="50%" left="-250px" rotate={-5} delay={0.9} />
+                        <FloatingKeyword text="tracking Sucess metrics" top="60%" right="-280px" rotate={8} delay={1.1} />
+                        <FloatingKeyword text="Product Roadmap" bottom="-80px" left="-150px" rotate={-8} delay={1.3} />
+                        <FloatingKeyword text="RAG powered Knowledge base" bottom="-120px" right="-100px" rotate={4} delay={1.5} />
+                        <FloatingKeyword text="LangChain Powered Multi Agent Architecture" top="-180px" left="50px" rotate={-3} delay={1.7} />
+                        <FloatingKeyword text="PWC Partnership Projects" bottom="-180px" left="20px" rotate={3} delay={1.9} />
+
                         <div style={{
                             width: '200px',
                             height: '200px',
@@ -512,7 +652,7 @@ const Home = () => {
                         </div>
                     </SectionCard>
 
-                </motion.div>
+                </motion.div >
             </div >
         </div >
     );
